@@ -197,17 +197,27 @@
       animation: fadeIn 2s ease forwards 1.5s;
     }
 
+    /* 変更：スクロールでふわっと表示させる画像スタイル */
     .rulebook img {
       width: 100%;
       margin-bottom: 20px;
       border-radius: 12px;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-      transform: scale(0.98);
-      transition: transform 0.6s ease;
+      /* 初期は下にずらして透明にしておく */
+      transform: translateY(20px) scale(0.98);
+      opacity: 0;
+      transition: transform 0.6s cubic-bezier(.2,.9,.2,1), opacity 0.8s ease;
+      will-change: transform, opacity;
+    }
+
+    /* ビューに入ったらふわっと */
+    .rulebook img.reveal {
+      transform: translateY(0) scale(1);
+      opacity: 1;
     }
 
     .rulebook img:hover {
-      transform: scale(1);
+      transform: scale(1); /* hoverは継続 */
     }
 
     footer {
@@ -339,6 +349,31 @@
       }
     }
 
+    // 画像のスクロール表示（IntersectionObserver を使用）
+    function setupImageReveal() {
+      const imgs = document.querySelectorAll('.rulebook img');
+      if (!imgs.length || !('IntersectionObserver' in window)) {
+        // フォールバック: すべて表示
+        imgs.forEach(i => i.classList.add('reveal'));
+        return;
+      }
+
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('reveal');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, {
+        root: null,
+        rootMargin: '0px 0px -10% 0px',
+        threshold: 0.15
+      });
+
+      imgs.forEach(img => observer.observe(img));
+    }
+
     // ENTER押下でローディング全体を消してコンテンツ表示
     enterBtn.addEventListener('click', () => {
       loader.style.transition = 'opacity 0.8s ease';
@@ -351,12 +386,19 @@
         // 初回生成とインターバルは一度だけセット
         spawnParticles(18);
         if (!particleTimer) particleTimer = setInterval(() => spawnParticles(8), 3500);
+        // 画像リビール初期化（ENTER後に実行してもOK）
+        setupImageReveal();
       }, 800);
     });
 
     // Enterキー対応
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') enterBtn.click();
+    });
+
+    // ページ読み込み時にセット（ロード中も準備しておく）
+    window.addEventListener('load', () => {
+      setupImageReveal();
     });
   </script>
 </body>
