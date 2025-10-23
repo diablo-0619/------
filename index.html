@@ -14,13 +14,11 @@
       font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
       background: #000;
       color: #fff;
-      overflow: hidden;
+      overflow: hidden; /* bodyは固定 */
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ===============================
-       ローディング画面
-    =============================== */
+    /* ローディング画面 */
     #loader {
       position: fixed;
       inset: 0;
@@ -33,6 +31,7 @@
       perspective: 1000px;
     }
 
+    /* タイトル */
     .title {
       display: flex;
       gap: 6px;
@@ -41,11 +40,13 @@
       font-size: 2.2rem;
       letter-spacing: 4px;
       text-shadow: 0 0 15px rgba(255,255,255,0.5);
+      opacity: 1;
     }
 
     .title span {
       opacity: 0;
       transform: translateY(-50px) rotateX(90deg);
+      animation: dropIn 0.6s ease forwards;
     }
 
     @keyframes dropIn {
@@ -55,6 +56,7 @@
       100% { transform: translateY(0); }
     }
 
+    /* 副題 */
     .subtitle {
       font-family: 'Orbitron', sans-serif;
       font-size: 1.2rem;
@@ -62,9 +64,9 @@
       margin-bottom: 25px;
       text-shadow: 0 0 8px rgba(255,255,255,0.3);
       opacity: 0;
-      transition: opacity 1.5s ease;
     }
 
+    /* 校章 */
     #loader img {
       width: 180px;
       height: 180px;
@@ -80,6 +82,7 @@
       100% { transform: rotateY(360deg); filter: brightness(1); }
     }
 
+    /* ENTERボタン */
     #enter-btn {
       margin-top: 10px;
       padding: 12px 38px;
@@ -99,9 +102,7 @@
       transform: scale(1.05);
     }
 
-    /* ===============================
-       メイン画面
-    =============================== */
+    /* メイン画面 */
     #content {
       opacity: 0;
       transition: opacity 1.5s ease;
@@ -113,6 +114,7 @@
       position: relative;
     }
 
+    /* 浮遊パーティクル */
     .particle {
       position: absolute;
       background: rgba(255, 255, 255, 0.3);
@@ -126,6 +128,7 @@
       to   { transform: translateY(-100vh); opacity: 0; }
     }
 
+    /* 本文タイトル */
     h1 {
       margin-top: 40px;
       font-size: 1.6rem;
@@ -168,6 +171,7 @@
 
     @keyframes fadeIn { to { opacity: 1; } }
 
+    /* スマホ対応 */
     @media (max-width: 600px) {
       .title { font-size: 1.4rem; }
       #loader img { width: 130px; height: 130px; }
@@ -176,6 +180,7 @@
   </style>
 </head>
 <body>
+  <!-- ローディング -->
   <div id="loader">
     <div class="title" id="title"></div>
     <div class="subtitle">MTE Festival 2025</div>
@@ -183,6 +188,7 @@
     <button id="enter-btn">ENTER</button>
   </div>
 
+  <!-- コンテンツ -->
   <div id="content">
     <div id="particles"></div>
     <h1>サバゲー ルールブック</h1>
@@ -201,7 +207,7 @@
     const subtitle = document.querySelector('.subtitle');
     const text = "2-2 サバイバルゲーム";
 
-    // タイトルアニメーション（残る）
+    // タイトル打ち付けアニメーション
     text.split('').forEach((char, i) => {
       const span = document.createElement('span');
       span.textContent = char;
@@ -209,17 +215,25 @@
       title.appendChild(span);
     });
 
-    // 副題表示（タイトルは残す）
+    // タイトルを一旦フェードアウト → 副題と同時に再表示
     setTimeout(() => {
-      subtitle.style.opacity = '1';
-    }, text.length*150 + 500);
+      title.style.transition = 'opacity 0.8s ease';
+      title.style.opacity = '0';
+    }, text.length*150 + 200);
 
-    // ENTERでまとめて消す
+    setTimeout(() => {
+      subtitle.style.transition = 'opacity 1.5s ease';
+      subtitle.style.opacity = '1';
+      title.style.transition = 'opacity 1.5s ease';
+      title.style.opacity = '1';
+    }, text.length*150 + 1000);
+
+    // ENTER押下でローディング全体を消してコンテンツ表示
     enterBtn.addEventListener('click', () => {
       loader.style.transition = 'opacity 0.8s ease';
       loader.style.opacity = '0';
       setTimeout(() => {
-        loader.remove(); // タイトル、副題、校章まとめて消す
+        loader.remove();
         content.style.opacity = '1';
         document.body.style.overflow = 'hidden';
         spawnParticles();
@@ -241,6 +255,7 @@
       setInterval(spawnParticles,4000);
     }
 
+    // Enterキー対応
     window.addEventListener('keydown',(e)=>{
       if(e.key==='Enter') enterBtn.click();
     });
