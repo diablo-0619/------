@@ -34,26 +34,29 @@
       perspective: 1000px;
     }
 
-.title {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 10px;
-  font-family: 'Orbitron', sans-serif;
-  font-size: 2.2rem;
-  letter-spacing: 4px;
-  text-shadow: 0 0 15px rgba(255,255,255,0.5);
-}
-.title span {
-  opacity: 0;
-  transform: translateY(-50px) rotateX(90deg);
-  animation: dropIn 0.6s ease forwards;
-}
-@keyframes dropIn {
-  0% { opacity:0; transform:translateY(-50px) rotateX(90deg) scale(1.3); }
-  60% { opacity:1; transform:translateY(5px) rotateX(0deg) scale(1); }
-  80% { transform:translateY(-2px); }
-  100% { transform:translateY(0); }
-}
+    /* タイトル */
+    .title {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.2rem;
+      letter-spacing: 4px;
+      text-shadow: 0 0 15px rgba(255,255,255,0.5);
+    }
+
+    .title span {
+      opacity: 0;
+      transform: translateY(-50px) rotateX(90deg);
+      animation: dropIn 0.6s ease forwards;
+    }
+
+    @keyframes dropIn {
+      0%   { opacity: 0; transform: translateY(-50px) rotateX(90deg) scale(1.3); }
+      60%  { opacity: 1; transform: translateY(5px) rotateX(0deg) scale(1); }
+      80%  { transform: translateY(-2px); }
+      100% { transform: translateY(0); }
+    }
 
     /* 副題 */
     .subtitle {
@@ -66,130 +69,147 @@
       animation: fadeIn 1.5s ease forwards 1.8s;
     }
 
-#loader img {
-  width: 180px;
-  height: 180px;
-  animation: spinY 3s linear infinite;
-  transform-style: preserve-3d;
-  filter: drop-shadow(0 0 15px rgba(255,255,255,0.4));
-  margin-bottom: 30px;
-}
-@keyframes spinY {
-  0% { transform: rotateY(0deg); filter: brightness(1); }
-  50% { transform: rotateY(180deg); filter: brightness(1.3); }
-  100% { transform: rotateY(360deg); filter: brightness(1); }
-}
+    /* 校章（横回転） */
+    #loader img {
+      width: 180px;
+      height: 180px;
+      animation: spinY 3s linear infinite;
+      transform-style: preserve-3d;
+      filter: drop-shadow(0 0 15px rgba(255,255,255,0.4));
+      margin-bottom: 30px;
+    }
 
-#enter-btn {
-  margin-top: 10px;
-  padding: 12px 38px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  letter-spacing: 0.08em;
-  color: #fff;
-  background: transparent;
-  border: 2px solid #fff;
-  border-radius: 40px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-#enter-btn:hover {
-  background: #fff;
-  color: #000;
-  transform: scale(1.05);
-}
+    @keyframes spinY {
+      0%   { transform: rotateY(0deg); filter: brightness(1); }
+      50%  { transform: rotateY(180deg); filter: brightness(1.3); }
+      100% { transform: rotateY(360deg); filter: brightness(1); }
+    }
 
-/* ===============================
-   メイン画面
-=============================== */
-#content {
-  opacity: 0;
-  transition: opacity 1s ease;
-  background: linear-gradient(135deg, #fdfdfd 0%, #f0f0f0 100%);
-  color: #222;
-  min-height: 100vh;
-  text-align: center;
-  overflow-y: auto;
-  position: relative;
-}
+    /* ENTERボタン */
+    #enter-btn {
+      margin-top: 10px;
+      padding: 12px 38px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      letter-spacing: 0.08em;
+      color: #fff;
+      background: transparent;
+      border: 2px solid #fff;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    #enter-btn:hover {
+      background: #fff;
+      color: #000;
+      transform: scale(1.05);
+    }
 
-.particle {
-  position: absolute;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  pointer-events: none;
-  animation: float 8s linear infinite;
-}
-@keyframes float {
-  from { transform: translateY(0); opacity: 1; }
-  to { transform: translateY(-100vh); opacity: 0; }
-}
+    /* ===============================
+       メイン画面
+    =============================== */
+    #content {
+      opacity: 0;
+      transition: opacity 1.5s ease;
+      background: linear-gradient(135deg, #fdfdfd 0%, #f0f0f0 100%);
+      color: #222;
+      height: 100vh; /* 高さ固定 */
+      overflow-y: auto; /* 縦スクロールのみ */
+      text-align: center;
+      position: relative;
+    }
 
-h1 {
-  margin-top: 40px;
-  font-size: 1.6rem;
-  font-family: 'Orbitron', sans-serif;
-  letter-spacing: 0.05em;
-  color: #111;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
+    /* 浮遊パーティクル */
+    .particle {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float 8s linear infinite;
+    }
 
-.rulebook {
-  width: 100%;
-  max-width: 900px;
-  margin: 40px auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.rulebook img {
-  width: 100%;
-  margin-bottom: 20px;
-  border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  transition: transform 0.6s ease;
-}
-.rulebook img:hover { transform: scale(1.05); }
+    @keyframes float {
+      from { transform: translateY(0); opacity: 1; }
+      to   { transform: translateY(-100vh); opacity: 0; }
+    }
 
-footer {
-  margin: 30px 0 20px;
-  color: #555;
-  font-size: 0.9rem;
-}
+    /* 本文タイトル */
+    h1 {
+      margin-top: 40px;
+      font-size: 1.6rem;
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 0.05em;
+      color: #111;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      opacity: 0;
+      animation: fadeIn 1.5s ease forwards 1s;
+    }
 
-@media (max-width: 600px) {
-  .title { font-size: 1.4rem; }
-  #loader img { width: 130px; height: 130px; }
-  .subtitle { font-size: 1rem; }
-}
-</style>
+    .rulebook {
+      width: 100%;
+      max-width: 900px;
+      margin: 40px auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0;
+      animation: fadeIn 2s ease forwards 1.5s;
+    }
+
+    .rulebook img {
+      width: 100%;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      transform: scale(0.98);
+      transition: transform 0.6s ease;
+    }
+    .rulebook img:hover { transform: scale(1); }
+
+    footer {
+      margin: 30px 0 20px;
+      color: #555;
+      font-size: 0.9rem;
+      opacity: 0;
+      animation: fadeIn 1.5s ease forwards 2s;
+    }
+
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    /* スマホ対応 */
+    @media (max-width: 600px) {
+      .title { font-size: 1.4rem; }
+      #loader img { width: 130px; height: 130px; }
+      .subtitle { font-size: 1rem; }
+    }
+  </style>
 </head>
 <body>
-
-<div id="loader">
-  <div class="title" id="title"></div>
-  <div class="subtitle" id="subtitle">MTE Festival 2025</div>
-  <img src="schoolmark.png" alt="MTE校章">
-  <button id="enter-btn">ENTER</button>
-</div>
-
-<div id="content">
-  <div id="particles"></div>
-  <h1>サバゲー ルールブック</h1>
-  <div class="rulebook">
-    <img src="文化祭ルールブック　客用_page-0001.jpg" alt="ルールブック1ページ目">
-    <img src="文化祭ルールブック　客用_page-0002.jpg" alt="ルールブック2ページ目">
+  <!-- 🌟 ローディング -->
+  <div id="loader">
+    <div class="title" id="title"></div>
+    <div class="subtitle">MTE Festival 2025</div>
+    <img src="schoolmark.png" alt="MTE校章">
+    <button id="enter-btn">ENTER</button>
   </div>
-  <footer>© 2025 MTE Festival</footer>
-</div>
 
-<script>
-const loader = document.getElementById('loader');
-const content = document.getElementById('content');
-const title = document.getElementById('title');
-const subtitle = document.getElementById('subtitle');
-const enterBtn = document.getElementById('enter-btn');
-const text = "2-2 サバイバルゲーム";
+  <!-- 🌟 コンテンツ -->
+  <div id="content">
+    <div id="particles"></div>
+    <h1>サバゲー ルールブック</h1>
+    <div class="rulebook">
+      <img src="文化祭ルールブック　客用_page-0001.jpg" alt="ルールブック1ページ目">
+      <img src="文化祭ルールブック　客用_page-0002.jpg" alt="ルールブック2ページ目">
+    </div>
+    <footer>© 2025 MTE Festival</footer>
+  </div>
+
+  <script>
+    const loader = document.getElementById('loader');
+    const content = document.getElementById('content');
+    const enterBtn = document.getElementById('enter-btn');
+    const title = document.getElementById('title');
+    const text = "2-2 サバイバルゲーム";
 
     // タイトル一文字ずつアニメーション
     text.split('').forEach((char, i) => {
