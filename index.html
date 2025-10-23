@@ -1,36 +1,38 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MTE Festival 2025</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
-<style>
-* { box-sizing: border-box; }
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
-  background: #000;
-  color: #fff;
-  overflow-x: hidden;
-  overflow-y: auto; /* 常にスクロール可能 */
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MTE Festival 2025</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
+      background: #000;
+      color: #fff;
+      overflow: hidden; /* bodyは固定 */
+      -webkit-font-smoothing: antialiased;
+    }
 
-/* ===============================
-   ローディング画面
-=============================== */
-#loader {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle at center, #111 0%, #000 100%);
-  z-index: 9999;
-}
+    /* ===============================
+       ローディング画面
+    =============================== */
+    #loader {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, #111 0%, #000 100%);
+      z-index: 9999;
+      transition: opacity 1s ease;
+      perspective: 1000px;
+    }
 
 .title {
   display: flex;
@@ -53,16 +55,16 @@ html, body {
   100% { transform:translateY(0); }
 }
 
-.subtitle {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1.2rem;
-  letter-spacing: 2px;
-  margin-bottom: 25px;
-  text-shadow: 0 0 8px rgba(255,255,255,0.3);
-  opacity: 0;
-  display: block;
-  transition: opacity 1s ease;
-}
+    /* 副題 */
+    .subtitle {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+      margin-bottom: 25px;
+      text-shadow: 0 0 8px rgba(255,255,255,0.3);
+      opacity: 0;
+      animation: fadeIn 1.5s ease forwards 1.8s;
+    }
 
 #loader img {
   width: 180px;
@@ -189,46 +191,45 @@ const subtitle = document.getElementById('subtitle');
 const enterBtn = document.getElementById('enter-btn');
 const text = "2-2 サバイバルゲーム";
 
-// 打ち付けアニメ
-text.split('').forEach((char,i)=>{
-  const span = document.createElement('span');
-  span.textContent = char;
-  span.style.animationDelay = `${i*0.15}s`;
-  title.appendChild(span);
-});
+    // タイトル一文字ずつアニメーション
+    text.split('').forEach((char, i) => {
+      const span = document.createElement('span');
+      span.textContent = char;
+      span.style.animationDelay = `${i * 0.15}s`;
+      title.appendChild(span);
+    });
 
-// 副題フェードイン同期
-setTimeout(()=>{
-  subtitle.style.opacity='1';
-}, text.length*150 + 500);
+    // ENTERボタン
+    enterBtn.addEventListener('click', () => {
+      loader.style.opacity = '0';
+      setTimeout(() => {
+        loader.remove(); // DOMから完全削除
+        content.style.opacity = '1';
+        document.body.style.overflow = 'hidden'; // bodyは固定
+        spawnParticles();
+      }, 1000);
+    });
 
-// ENTER押下で loader を完全削除 → content 表示
-function enterAction(){
-  loader.remove();
-  content.style.opacity='1';
-  spawnParticles();
-}
-enterBtn.addEventListener('click', enterAction);
-window.addEventListener('keydown', e=>{
-  if(e.key==='Enter') enterAction();
-});
+    // パーティクル生成
+    function spawnParticles() {
+      const container = document.getElementById('content');
+      for (let i = 0; i < 25; i++) {
+        const p = document.createElement('div');
+        p.classList.add('particle');
+        p.style.width = p.style.height = Math.random() * 6 + 'px';
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.bottom = '-10px';
+        p.style.animationDuration = (5 + Math.random() * 5) + 's';
+        container.appendChild(p);
+        setTimeout(() => p.remove(), 10000);
+      }
+      setInterval(spawnParticles, 4000);
+    }
 
-// パーティクル
-function spawnParticles(){
-  const container = document.getElementById('content');
-  for(let i=0;i<25;i++){
-    const p=document.createElement('div');
-    p.classList.add('particle');
-    p.style.width=p.style.height=Math.random()*6+'px';
-    p.style.left=Math.random()*100+'vw';
-    p.style.bottom='-10px';
-    p.style.animationDuration=(5+Math.random()*5)+'s';
-    container.appendChild(p);
-    setTimeout(()=>p.remove(),10000);
-  }
-  setInterval(spawnParticles,4000);
-}
-</script>
-
+    // Enterキー対応
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') enterBtn.click();
+    });
+  </script>
 </body>
 </html>
