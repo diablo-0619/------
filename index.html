@@ -43,14 +43,12 @@
       font-size: 2.2rem;
       letter-spacing: 4px;
       text-shadow: 0 0 15px rgba(255,255,255,0.5);
-      opacity: 1; /* 修正：副題前でも表示 */
     }
 
     .title span {
       opacity: 0;
       transform: translateY(-50px) rotateX(90deg);
       animation: dropIn 0.6s ease forwards;
-      animation-fill-mode: forwards; /* 修正：アニメ終了後も残る */
     }
 
     @keyframes dropIn {
@@ -68,7 +66,7 @@
       margin-bottom: 25px;
       text-shadow: 0 0 8px rgba(255,255,255,0.3);
       opacity: 0;
-      animation: fadeIn 1.5s ease forwards 1.8s;
+      transition: opacity 1.5s ease;
     }
 
     /* 校章（横回転） */
@@ -178,7 +176,6 @@
 
     @keyframes fadeIn { to { opacity: 1; } }
 
-    /* スマホ対応 */
     @media (max-width: 600px) {
       .title { font-size: 1.4rem; }
       #loader img { width: 130px; height: 130px; }
@@ -190,7 +187,7 @@
   <!-- 🌟 ローディング -->
   <div id="loader">
     <div class="title" id="title"></div>
-    <div class="subtitle" id="subtitle">MTE Festival 2025</div>
+    <div class="subtitle">MTE Festival 2025</div>
     <img src="schoolmark.png" alt="MTE校章">
     <button id="enter-btn">ENTER</button>
   </div>
@@ -211,35 +208,33 @@
     const content = document.getElementById('content');
     const enterBtn = document.getElementById('enter-btn');
     const title = document.getElementById('title');
-    const subtitle = document.getElementById('subtitle');
+    const subtitle = document.querySelector('.subtitle');
     const text = "2-2 サバイバルゲーム";
 
     // タイトル一文字ずつアニメーション
-text.split('').forEach((char, i) => {
-  const span = document.createElement('span');
-  span.textContent = char;
-  span.style.animationDelay = `${i * 0.15}s`;
-  span.style.animationFillMode = 'forwards'; // 追加: アニメ終了後も残す
-  title.appendChild(span);
-});
+    text.split('').forEach((char, i) => {
+      const span = document.createElement('span');
+      span.textContent = char;
+      span.style.animationDelay = `${i * 0.15}s`;
+      span.style.animationFillMode = 'forwards'; // ✅ アニメ終了後も残す
+      title.appendChild(span);
+    });
 
-// 副題フェードインのみ
-setTimeout(() => {
-  subtitle.style.opacity = '1';
-}, text.length * 150 + 500);
+    // 副題フェードイン（タイトルは残す）
+    setTimeout(() => {
+      subtitle.style.opacity = '1';
+    }, text.length * 150 + 500);
 
-// ENTERボタン
-enterBtn.addEventListener('click', () => {
-  // loader全体をまとめて消す
-  loader.style.opacity = '0';
-  setTimeout(() => {
-    loader.remove(); // タイトル・副題・校章すべて消える
-    content.style.opacity = '1';
-    document.body.style.overflow = 'hidden'; // bodyは固定
-    spawnParticles();
-  }, 1000);
-});
-
+    // ENTERボタン
+    enterBtn.addEventListener('click', () => {
+      loader.style.opacity = '0';
+      setTimeout(() => {
+        loader.remove(); // ✅ タイトル・副題・校章まとめて消す
+        content.style.opacity = '1';
+        document.body.style.overflow = 'hidden'; // body固定
+        spawnParticles();
+      }, 1000);
+    });
 
     // パーティクル生成
     function spawnParticles() {
