@@ -14,7 +14,7 @@
       font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
       background: #000;
       color: #fff;
-      overflow: hidden; /* body固定 */
+      overflow: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -65,9 +65,10 @@
       margin-bottom: 25px;
       text-shadow: 0 0 8px rgba(255,255,255,0.3);
       opacity: 0;
+      display: none;
     }
 
-    /* 校章（横回転） */
+    /* 校章 */
     #loader img {
       width: 180px;
       height: 180px;
@@ -111,9 +112,9 @@
       transition: opacity 1.5s ease;
       background: linear-gradient(135deg, #fdfdfd 0%, #f0f0f0 100%);
       color: #222;
-      height: 100vh;
-      overflow-y: auto;
+      min-height: 100vh;
       text-align: center;
+      overflow-y: auto;
       position: relative;
     }
 
@@ -186,7 +187,7 @@
   <!-- 🌟 ローディング -->
   <div id="loader">
     <div class="title" id="title"></div>
-    <div class="subtitle">MTE Festival 2025</div>
+    <div class="subtitle" id="subtitle">MTE Festival 2025</div>
     <img src="schoolmark.png" alt="MTE校章">
     <button id="enter-btn">ENTER</button>
   </div>
@@ -207,10 +208,10 @@
     const content = document.getElementById('content');
     const enterBtn = document.getElementById('enter-btn');
     const title = document.getElementById('title');
-    const subtitle = loader.querySelector('.subtitle');
+    const subtitle = document.getElementById('subtitle');
     const text = "2-2 サバイバルゲーム";
 
-    // タイトル一文字ずつアニメーション
+    // タイトル打ち付けアニメ
     text.split('').forEach((char, i) => {
       const span = document.createElement('span');
       span.textContent = char;
@@ -218,19 +219,25 @@
       title.appendChild(span);
     });
 
+    // 打ち付けアニメ終了後、副題フェードイン
+    const totalDelay = text.length * 150 + 500; // アニメ終了目安
+    setTimeout(() => {
+      subtitle.style.display = 'block';
+      subtitle.style.opacity = '0';
+      subtitle.style.transition = 'opacity 1s ease';
+      setTimeout(() => subtitle.style.opacity = '1', 50);
+    }, totalDelay);
+
     // ENTERボタン
     enterBtn.addEventListener('click', () => {
-      // タイトルは残して副題・校章・ボタンだけフェードアウト
-      const elementsToHide = [subtitle, loader.querySelector('img'), enterBtn];
-      elementsToHide.forEach(el => el.style.opacity = '0');
-      loader.style.transition = 'opacity 1s ease';
+      // loader内の全要素を非表示（タイトル＋副題＋校章＋ボタン）
+      loader.style.display = 'none';
 
-      // 副題がフェードインするタイミングでコンテンツ表示
-      setTimeout(() => {
-        content.style.opacity = '1';
-        document.body.style.overflow = 'hidden';
-        spawnParticles();
-      }, 1000);
+      // コンテンツ表示
+      content.style.opacity = '1';
+      content.style.overflowY = 'auto';
+
+      spawnParticles();
     });
 
     // パーティクル生成
