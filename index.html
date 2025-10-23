@@ -14,7 +14,7 @@
       font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
       background: #000;
       color: #fff;
-      overflow: hidden; /* bodyは固定 */
+      overflow: hidden; /* body固定 */
       -webkit-font-smoothing: antialiased;
     }
 
@@ -30,7 +30,6 @@
       justify-content: center;
       background: radial-gradient(circle at center, #111 0%, #000 100%);
       z-index: 9999;
-      transition: opacity 1s ease;
       perspective: 1000px;
     }
 
@@ -66,7 +65,6 @@
       margin-bottom: 25px;
       text-shadow: 0 0 8px rgba(255,255,255,0.3);
       opacity: 0;
-      animation: fadeIn 1.5s ease forwards 1.8s;
     }
 
     /* 校章（横回転） */
@@ -113,8 +111,8 @@
       transition: opacity 1.5s ease;
       background: linear-gradient(135deg, #fdfdfd 0%, #f0f0f0 100%);
       color: #222;
-      height: 100vh; /* 高さ固定 */
-      overflow-y: auto; /* 縦スクロールのみ */
+      height: 100vh;
+      overflow-y: auto;
       text-align: center;
       position: relative;
     }
@@ -209,6 +207,7 @@
     const content = document.getElementById('content');
     const enterBtn = document.getElementById('enter-btn');
     const title = document.getElementById('title');
+    const subtitle = loader.querySelector('.subtitle');
     const text = "2-2 サバイバルゲーム";
 
     // タイトル一文字ずつアニメーション
@@ -221,11 +220,15 @@
 
     // ENTERボタン
     enterBtn.addEventListener('click', () => {
-      loader.style.opacity = '0';
+      // タイトルは残して副題・校章・ボタンだけフェードアウト
+      const elementsToHide = [subtitle, loader.querySelector('img'), enterBtn];
+      elementsToHide.forEach(el => el.style.opacity = '0');
+      loader.style.transition = 'opacity 1s ease';
+
+      // 副題がフェードインするタイミングでコンテンツ表示
       setTimeout(() => {
-        loader.remove(); // DOMから完全削除
         content.style.opacity = '1';
-        document.body.style.overflow = 'hidden'; // bodyは固定
+        document.body.style.overflow = 'hidden';
         spawnParticles();
       }, 1000);
     });
