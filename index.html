@@ -207,7 +207,7 @@
     const subtitle = document.querySelector('.subtitle');
     const text = "2-2 サバイバルゲーム";
 
-    // タイトル生成を関数化（再表示用）
+    // タイトル生成を関数化（初回表示は文字ごとのアニメ）
     function renderTitle() {
       title.innerHTML = '';
       text.split('').forEach((char, i) => {
@@ -216,6 +216,8 @@
         span.style.animation = `dropIn 0.6s ease forwards ${i*0.15}s`;
         title.appendChild(span);
       });
+      // 初回は見えている状態にしておく
+      title.style.opacity = '1';
     }
 
     // 初回表示
@@ -227,16 +229,17 @@
       title.style.opacity = '0';
     }, text.length*150 + 200);
 
-    // 副題と一緒にタイトルを再表示（再生成してアニメーションを再実行）
+    // 副題と一緒にタイトルを再表示（副題と同じフェード表示に変更）
     setTimeout(() => {
       subtitle.style.transition = 'opacity 1.5s ease';
       subtitle.style.opacity = '1';
 
-      // 再生成してアニメーションをリセット
-      renderTitle();
-      // reflow を強制して確実にアニメーションが再生されるようにする
+      // 再表示は副題と同じようにプレーンテキストでフェードイン
+      title.style.transition = 'none';
+      title.style.opacity = '0';
+      title.innerHTML = text; // スパンではなくプレーンテキストにする
+      // reflow を強制してトランジションを確実に効かせる
       void title.offsetWidth;
-
       title.style.transition = 'opacity 1.5s ease';
       title.style.opacity = '1';
     }, text.length*150 + 1000);
