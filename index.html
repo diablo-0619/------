@@ -215,29 +215,31 @@
     const text = "2-2 サバイバルゲーム";
 
     // タイトル一文字ずつアニメーション
-    text.split('').forEach((char, i) => {
-      const span = document.createElement('span');
-      span.textContent = char;
-      span.style.animationDelay = `${i * 0.15}s`;
-      title.appendChild(span);
-    });
+text.split('').forEach((char, i) => {
+  const span = document.createElement('span');
+  span.textContent = char;
+  span.style.animationDelay = `${i * 0.15}s`;
+  span.style.animationFillMode = 'forwards'; // 追加: アニメ終了後も残す
+  title.appendChild(span);
+});
 
-    // 副題フェードインと同期してタイトルも表示
-    setTimeout(() => {
-      subtitle.style.opacity = '1';
-      title.style.opacity = '1';
-    }, text.length * 150 + 500);
+// 副題フェードインのみ
+setTimeout(() => {
+  subtitle.style.opacity = '1';
+}, text.length * 150 + 500);
 
-    // ENTERボタン
-    enterBtn.addEventListener('click', () => {
-      loader.style.opacity = '0';
-      setTimeout(() => {
-        loader.remove(); // loaderとタイトル・副題・校章をまとめて削除
-        content.style.opacity = '1';
-        document.body.style.overflow = 'hidden'; // bodyは固定
-        spawnParticles();
-      }, 1000);
-    });
+// ENTERボタン
+enterBtn.addEventListener('click', () => {
+  // loader全体をまとめて消す
+  loader.style.opacity = '0';
+  setTimeout(() => {
+    loader.remove(); // タイトル・副題・校章すべて消える
+    content.style.opacity = '1';
+    document.body.style.overflow = 'hidden'; // bodyは固定
+    spawnParticles();
+  }, 1000);
+});
+
 
     // パーティクル生成
     function spawnParticles() {
