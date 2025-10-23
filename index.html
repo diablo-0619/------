@@ -14,7 +14,7 @@
       font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
       background: #000;
       color: #fff;
-      overflow: hidden; /* bodyは固定 */
+      overflow: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -43,12 +43,14 @@
       font-size: 2.2rem;
       letter-spacing: 4px;
       text-shadow: 0 0 15px rgba(255,255,255,0.5);
+      opacity: 1; /* 修正：副題前でも表示 */
     }
 
     .title span {
       opacity: 0;
       transform: translateY(-50px) rotateX(90deg);
       animation: dropIn 0.6s ease forwards;
+      animation-fill-mode: forwards; /* 修正：アニメ終了後も残る */
     }
 
     @keyframes dropIn {
@@ -113,8 +115,8 @@
       transition: opacity 1.5s ease;
       background: linear-gradient(135deg, #fdfdfd 0%, #f0f0f0 100%);
       color: #222;
-      height: 100vh; /* 高さ固定 */
-      overflow-y: auto; /* 縦スクロールのみ */
+      height: 100vh;
+      overflow-y: auto;
       text-align: center;
       position: relative;
     }
@@ -188,7 +190,7 @@
   <!-- 🌟 ローディング -->
   <div id="loader">
     <div class="title" id="title"></div>
-    <div class="subtitle">MTE Festival 2025</div>
+    <div class="subtitle" id="subtitle">MTE Festival 2025</div>
     <img src="schoolmark.png" alt="MTE校章">
     <button id="enter-btn">ENTER</button>
   </div>
@@ -209,6 +211,7 @@
     const content = document.getElementById('content');
     const enterBtn = document.getElementById('enter-btn');
     const title = document.getElementById('title');
+    const subtitle = document.getElementById('subtitle');
     const text = "2-2 サバイバルゲーム";
 
     // タイトル一文字ずつアニメーション
@@ -219,11 +222,17 @@
       title.appendChild(span);
     });
 
+    // 副題フェードインと同期してタイトルも表示
+    setTimeout(() => {
+      subtitle.style.opacity = '1';
+      title.style.opacity = '1';
+    }, text.length * 150 + 500);
+
     // ENTERボタン
     enterBtn.addEventListener('click', () => {
       loader.style.opacity = '0';
       setTimeout(() => {
-        loader.remove(); // DOMから完全削除
+        loader.remove(); // loaderとタイトル・副題・校章をまとめて削除
         content.style.opacity = '1';
         document.body.style.overflow = 'hidden'; // bodyは固定
         spawnParticles();
