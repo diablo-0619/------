@@ -14,7 +14,7 @@
       font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
       background: #000;
       color: #fff;
-      overflow: hidden; /* body固定 */
+      overflow: hidden; /* bodyは固定 */
       -webkit-font-smoothing: antialiased;
     }
 
@@ -28,10 +28,10 @@
       justify-content: center;
       background: radial-gradient(circle at center, #111 0%, #000 100%);
       z-index: 9999;
-      transition: opacity 1s ease;
       perspective: 1000px;
     }
 
+    /* タイトル */
     .title {
       display: flex;
       gap: 6px;
@@ -40,7 +40,7 @@
       font-size: 2.2rem;
       letter-spacing: 4px;
       text-shadow: 0 0 15px rgba(255,255,255,0.5);
-      opacity: 0; /* 初期非表示 */
+      opacity: 1;
     }
 
     .title span {
@@ -56,6 +56,7 @@
       100% { transform: translateY(0); }
     }
 
+    /* 副題 */
     .subtitle {
       font-family: 'Orbitron', sans-serif;
       font-size: 1.2rem;
@@ -65,6 +66,7 @@
       opacity: 0;
     }
 
+    /* 校章 */
     #loader img {
       width: 180px;
       height: 180px;
@@ -80,6 +82,7 @@
       100% { transform: rotateY(360deg); filter: brightness(1); }
     }
 
+    /* ENTERボタン */
     #enter-btn {
       margin-top: 10px;
       padding: 12px 38px;
@@ -99,6 +102,7 @@
       transform: scale(1.05);
     }
 
+    /* メイン画面 */
     #content {
       opacity: 0;
       transition: opacity 1.5s ease;
@@ -110,6 +114,7 @@
       position: relative;
     }
 
+    /* 浮遊パーティクル */
     .particle {
       position: absolute;
       background: rgba(255, 255, 255, 0.3);
@@ -123,6 +128,7 @@
       to   { transform: translateY(-100vh); opacity: 0; }
     }
 
+    /* 本文タイトル */
     h1 {
       margin-top: 40px;
       font-size: 1.6rem;
@@ -165,6 +171,7 @@
 
     @keyframes fadeIn { to { opacity: 1; } }
 
+    /* スマホ対応 */
     @media (max-width: 600px) {
       .title { font-size: 1.4rem; }
       #loader img { width: 130px; height: 130px; }
@@ -173,13 +180,15 @@
   </style>
 </head>
 <body>
+  <!-- ローディング -->
   <div id="loader">
     <div class="title" id="title"></div>
-    <div class="subtitle" id="subtitle">MTE Festival 2025</div>
+    <div class="subtitle">MTE Festival 2025</div>
     <img src="schoolmark.png" alt="MTE校章">
     <button id="enter-btn">ENTER</button>
   </div>
 
+  <!-- コンテンツ -->
   <div id="content">
     <div id="particles"></div>
     <h1>サバゲー ルールブック</h1>
@@ -195,57 +204,73 @@
     const content = document.getElementById('content');
     const enterBtn = document.getElementById('enter-btn');
     const title = document.getElementById('title');
-    const subtitle = document.getElementById('subtitle');
+    const subtitle = document.querySelector('.subtitle');
     const text = "2-2 サバイバルゲーム";
 
-    // 打ち付けアニメ
-    text.split('').forEach((char, i) => {
-      const span = document.createElement('span');
-      span.textContent = char;
-      span.style.animationDelay = `${i * 0.15}s`;
-      title.appendChild(span);
-    });
+    // タイトル生成を関数化（再表示用）
+    function renderTitle() {
+      title.innerHTML = '';
+      text.split('').forEach((char, i) => {
+        const span = document.createElement('span');
+        span.textContent = char;
+        span.style.animation = `dropIn 0.6s ease forwards ${i*0.15}s`;
+        title.appendChild(span);
+      });
+    }
 
-    // 打ち付けアニメ終了後、タイトルと副題同時にフェードイン
+    // 初回表示
+    renderTitle();
+
+    // タイトルを一旦フェードアウト
     setTimeout(() => {
-      title.style.opacity = '0'; // 一旦消す
-      void title.offsetWidth;      // 強制再描画
-      title.style.transition = 'opacity 1.5s ease';
-      subtitle.style.transition = 'opacity 1.5s ease';
-      title.style.opacity = '1';
-      subtitle.style.opacity = '1';
-    }, text.length * 150 + 500);
+      title.style.transition = 'opacity 0.8s ease';
+      title.style.opacity = '0';
+    }, text.length*150 + 200);
 
-    // ENTERボタン
+    // 副題と一緒にタイトルを再表示（再生成してアニメーションを再実行）
+    setTimeout(() => {
+      subtitle.style.transition = 'opacity 1.5s ease';
+      subtitle.style.opacity = '1';
+
+      // 再生成してアニメーションをリセット
+      renderTitle();
+      // reflow を強制して確実にアニメーションが再生されるようにする
+      void title.offsetWidth;
+
+      title.style.transition = 'opacity 1.5s ease';
+      title.style.opacity = '1';
+    }, text.length*150 + 1000);
+
+    // ENTER押下でローディング全体を消してコンテンツ表示
     enterBtn.addEventListener('click', () => {
+      loader.style.transition = 'opacity 0.8s ease';
       loader.style.opacity = '0';
       setTimeout(() => {
-        loader.remove();       // ローディング全削除
+        loader.remove();
         content.style.opacity = '1';
         document.body.style.overflow = 'hidden';
         spawnParticles();
-      }, 1000);
+      }, 800);
     });
 
-    // パーティクル
     function spawnParticles() {
       const container = document.getElementById('content');
-      for (let i = 0; i < 25; i++) {
+      for (let i=0;i<25;i++){
         const p = document.createElement('div');
         p.classList.add('particle');
-        p.style.width = p.style.height = Math.random() * 6 + 'px';
-        p.style.left = Math.random() * 100 + 'vw';
+        p.style.width = p.style.height = Math.random()*6+'px';
+        p.style.left = Math.random()*100+'vw';
         p.style.bottom = '-10px';
-        p.style.animationDuration = (5 + Math.random() * 5) + 's';
+        p.style.animationDuration = (5+Math.random()*5)+'s';
         container.appendChild(p);
-        setTimeout(() => p.remove(), 10000);
+        setTimeout(()=>p.remove(),10000);
       }
-      setInterval(spawnParticles, 4000);
+      setInterval(spawnParticles,4000);
     }
 
     // Enterキー対応
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') enterBtn.click();
+    window.addEventListener('keydown',(e)=>{
+      if(e.key==='Enter') enterBtn.click();
     });
   </script>
 </body>
